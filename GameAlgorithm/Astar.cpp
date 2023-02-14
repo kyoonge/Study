@@ -36,7 +36,7 @@ int main() {
     }
   }
 
-  cout << grid[0][0];  
+  cout << "----------\n";  
   
   if (AstarSearch(grid, dst)) {
     cout << "good";
@@ -52,6 +52,7 @@ bool AstarSearch(vector<vector<int>> world, pair<int, int> dst) {
 
   bool closedList[dst.first][dst.second];
   memset(closedList, false, sizeof(closedList));
+  cout<<"dst.first: "<<dst.first<<" dst.second: "<<dst.second<<"\n";
 
   Room room[dst.first][dst.second];
   for (int i = 0; i < dst.first; ++i) {
@@ -85,34 +86,31 @@ bool AstarSearch(vector<vector<int>> world, pair<int, int> dst) {
 
     // 상하좌우 노드 탐색
     for (int i = 0; i < 4; ++i) {
-
-
-      cout<<"\n";
-        for(int i=0;i<dst.first;i++){
-          for(int j=0;j<dst.second;j++){
+      
+      int ny = y + dy[i];
+      int nx = x + dx[i];
+      cout << "\nny: "<<ny <<" nx: "<<nx<<"\n";
+      cout<<"closedList\n";
+        for(int i=0;i<dst.second;i++){
+          for(int j=0;j<dst.first;j++){
             cout<< closedList[i][j];
           }
           cout<<"\n";
         }
-          
-        cout << "1";
-      int ny = y + dy[i];
-      int nx = x + dx[i];
-      cout << "ny: "<<ny <<" nx: "<<nx<<"\n";
 
       if (ny >= 0 && ny < dst.first && nx >= 0 && nx < dst.second) {
-        cout << "2.1";
-        if (ny == dst.first && nx == dst.second) {
+        cout << "범위완";
+        if (ny == dst.first-1 && nx == dst.second-1) {
           room[ny][nx].parentY = y;
           room[ny][nx].parentX = x;
           // tracePath(cellDetails, dst);
-          cout << "2.2";
+          cout << "도착";
           return true;
         }
         // bfs와 굳이 비교하자면, closedList를 방문여부라고 생각하시면 됩니다.
-        else if (!closedList[ny][nx] && world[y][x] == 1) {
+        else if (!closedList[ny][nx] && (world[ny][nx] == 1)) {
           // 이부분 y x, ny nx 헷갈리는거 조심
-          cout << "3";
+          cout << "world["<<y<<"]["<<x<<"]="<<world[ny][nx]<<"\n";
           ng = room[y][x].g + 1.0;
           nh = GetH(ny, nx, dst);
           nf = ng + nh;
@@ -129,6 +127,14 @@ bool AstarSearch(vector<vector<int>> world, pair<int, int> dst) {
             cout<<" nf: "<<nf;
           }
         }
+        cout<<"\nworld\n";
+        for(int i=0;i<2;i++){
+          for(int j=0;j<2;j++){
+            cout<<world[i][j];
+          }
+          cout<<"\n";
+        }
+        
       }
     }
   }
