@@ -1,244 +1,137 @@
-#include <bits/stdc++.h>
-#include <utility>
+#include <cmath>
+#include <cstring>
+#include <iostream>
+#include <set>
+#include <string>
+#include <vector>
 
-const int MAX = 101;
-const double INF = 1e9+7;
+using namespace std;
 
-// 직선
-const int dx1[4] = { 0, 0, 1, -1 };
-const int dy1[4] = { -1, 1, 0, 0 };
+//상하좌우 이동
+const int dx[4] = {0, 0, 1, -1};
+const int dy[4] = {-1, 1, 0, 0};
 
-// 대각선
-const int dx2[4] = { 1, -1, -1, 1 };
-const int dy2[4] = { -1, 1, -1, 1 };
-
-struct Cell {
-	int parent_x, parent_y;
-	double f, g, h;
+struct Room {
+  int parentX, parentY;
+  double f, g, h;
 };
 
+double GetH(int x, int y, pair<int, int> dst);
+bool AstarSearch(vector<vector<int>> world, pair<int, int> dst);
 
-char zmap[MAX][MAX];
-int ROW = 0, COL = 0;
+int main() {
+  //맵 입력
+  int row, col = 0;
+  pair<int, int> start, dst;
 
-bool isDestination(int row, int col, Pair dst) {
-	if (row == dst.first && col == dst.second) return true;
-	return false;
-}
+  cin >> row >> col;
+  start = {0, 0};
+  dst = {row, col};
 
-bool isInRange(int row, int col) {
-	return (row >= 0 && row < ROW && col >= 0 && col < COL);
-}
+  vector<vector<int>> grid(row, vector<int>(col));
 
-bool isUnBlocked(std::vector<std::vector<int>>& map, int row, int col) {
-	return (map[row][col] == 0);
-}
+  for (int i = 0; i < row; ++i) {
+    for (int j = 0; j < col; ++j) {
+      cin >> grid[i][j];
+    }
+  }
 
-double GethValue(int row, int col, Pair dst) {
-	return (double)std::sqrt(std::pow(row - dst.first, 2) + std::pow(col - dst.second, 2));
-}
-
-void tracePath(Cell cellDetails[MAX][MAX], Pair dst) {
-	std::stack<Pair> s;
-	int y = dst.first;
-	int x = dst.second;
-
-	s.push({ y, x });
-	// cellDetails의 x, y의 부모좌표가 모두 현재좌표와 동일할때까지 반복
-	while (!(cellDetails[y][x].parent_x == x && cellDetails[y][x].parent_y == y)) {
-		int tempy = cellDetails[y][x].parent_y;
-		int tempx = cellDetails[y][x].parent_x;
-		y = tempy;
-		x = tempx;
-		s.push({ y, x });
-	}
-
-	while (!s.empty()) {
-		zmap[s.top().first][s.top().second] = '*';
-		s.pop();
-	}
-}
-
-bool aStarSearch(std::vector<std::vector<int>>& map, Pair src, Pair dst) {
-	if (!isInRange(src.first, src.second) || !isInRange(dst.first, dst.second)) return false;
-	if (!isUnBlocked(map, src.first, src.second) || !isUnBlocked(map, dst.first, dst.second)) return false;
-	if (isDestination(src.first, src.second, dst)) return false;
-
-	bool closedList[MAX][MAX];
-	std::memset(closedList, false, sizeof(closedList));
-
-	Cell cellDetails[MAX][MAX];
-
-	// 내용초기화
-    	// 이 구조 많이 보셨을겁니다. (최대유량알고리즘과 유사)
-        // 계산해야할 값부분은 INF로하고, 계산할 경로는 -1로 초기화
-	for (int i = 0; i < ROW; ++i) {
-		for (int j = 0; j < COL; ++j) {
-			cellDetails[i][j].f = cellDetails[i][j].g = cellDetails[i][j].h = INF;
-			cellDetails[i][j].parent_x = cellDetails[i][j].parent_y = -1;
-		}
-	}
-
-	// src의 좌표가 첫좌표가 된다.
-	int sy = src.first;
-	int sx = src.second;
-	cellDetails[sy][sx].f = cellDetails[sy][sx].g = cellDetails[sy][sx].h = 0.0;
-	cellDetails[sy][sx].parent_x = sx;
-	cellDetails[sy][sx].parent_y = sy;
-
-	std::set<pPair> openList;
-	openList.insert({ 0.0, { sy, sx } });
-
-	// 이 반복구조 bfs와 엄청 똑같습니다.
-	while (!openList.empty()) {
-		pPair p = *openList.begin();
-		openList.erase(openList.begin());
-
-		int y = p.second.first;
-		int x = p.second.second;
-		closedList[y][x] = true;
-
-		double ng, nf, nh;
-
-		// 직선
-		for (int i = 0; i < 4; ++i) {
-			int ny = y + dy1[i];
-			int nx = x + dx1[i];
-
-			if (isInRange(ny, nx)) {
-				if (isDestination(ny, nx, dst)) {
-					cellDetails[ny][nx].parent_y = y;
-					cellDetails[ny][nx].parent_x = x;
-					tracePath(cellDetails, dst);
-					return true;
-				}
-                
-                		// bfs와 굳이 비교하자면, closedList를 방문여부라고 생각하시면 됩니다.
-				else if (!closedList[ny][nx] && isUnBlocked(map, ny, nx)) {
-                			// 이부분 y x, ny nx 헷갈리는거 조심
-					ng = cellDetails[y][x].g + 1.0;
-					nh = GethValue(ny, nx, dst);
-					nf = ng + nh;
-                    
-                    			// 만약 한번도 갱신이 안된f거나, 새로갱신될 f가 기존f보다 작을시 참
-					if (cellDetails[ny][nx].f == INF || cellDetails[ny][nx].f > nf) {
-						cellDetails[ny][nx].f = nf;
-						cellDetails[ny][nx].g = ng;
-						cellDetails[ny][nx].h = nh;
-						cellDetails[ny][nx].parent_x = x;
-						cellDetails[ny][nx].parent_y = y;
-						openList.insert({ nf, { ny, nx } });
-					}
-				}
-			}
-		}
-
-		// 대각선
-		for (int i = 0; i < 4; ++i) {
-			int ny = y + dy2[i];
-			int nx = x + dx2[i];
-
-			if (isInRange(ny, nx)) {
-				if (isDestination(ny, nx, dst)) {
-					cellDetails[ny][nx].parent_y = y;
-					cellDetails[ny][nx].parent_x = x;
-					tracePath(cellDetails, dst);
-					return true;
-				}
-				else if (!closedList[ny][nx] && isUnBlocked(map, ny, nx)) {
-					ng = cellDetails[y][x].g + 1.414;
-					nh = GethValue(ny, nx, dst);
-					nf = ng + nh;
-
-					if (cellDetails[ny][nx].f == INF || cellDetails[ny][nx].f > nf) {
-						cellDetails[ny][nx].f = nf;
-						cellDetails[ny][nx].g = ng;
-						cellDetails[ny][nx].h = nh;
-						cellDetails[ny][nx].parent_x = x;
-						cellDetails[ny][nx].parent_y = y;
-						openList.insert({ nf, { ny, nx } });
-					}
-				}
-			}
-		}
-	}
-
-	return false;
-}
-
-void PrintMap() {
-	for (int i = 0; i < ROW; ++i) {
-		for (int j = 0; j < COL; ++j) {
-			std::cout << zmap[i][j];
-		}
-		std::cout << '\n';
-	}
-}
-
-std::vector<std::vector<int>> fileload(std::string filepath) {
-	std::ifstream ifs(filepath);
-
-	int col, row, cur = 0;
-
-	if (ifs.is_open()) {
-		ifs >> ROW >> COL;
-		std::vector<std::vector<int>> result(ROW, std::vector<int>(COL));
-
-		for (int i = 0; i < ROW; ++i) {
-			for (int j = 0; j < COL; ++j) {
-				ifs >> result[i][j];
-			}
-		}
-
-		return result;
-	}
-
-	return std::vector<std::vector<int>>();
-}
-
-
-int main() { // 0: 빈 공간, 1: 벽, 2: 출발지점, 3: 도착지점 
-
-  pair<int, int> src, dst;
-  pPair<double, pair>;
+  cout << grid[0][0];  
   
-  Pair src, dst;
-	int row, col;
+  if (AstarSearch(grid, dst)) {
+    cout << "good";
+  }
+}
 
 
-	std::cin >> row >> col;
-	ROW = row;
-	COL = col;
+double GetH(int x, int y, pair<int, int> dst) {
+  return (double)sqrt(pow(x - dst.first, 2) + std::pow(y - dst.second, 2));
+}
 
-	std::vector<std::vector<int>> grid(row, std::vector<int>(col));
+bool AstarSearch(vector<vector<int>> world, pair<int, int> dst) {
 
-	for(int i=0;i<row;++i){
-		for(int j=0;j<col;++j){
-			std::cin >> grid[i][j];
-		}
-	}
+  bool closedList[dst.first][dst.second];
+  memset(closedList, false, sizeof(closedList));
 
-	for (int i = 0; i < ROW; ++i) {
-		for (int j = 0; j < COL; ++j) {
-			if (grid[i][j] == 2) {
-				src = { i, j };
-				grid[i][j] = 0;
-			}
-			if (grid[i][j] == 3) {
-				dst = { i, j };
-				grid[i][j] = 0;
-			}
-		}
-	}
+  Room room[dst.first][dst.second];
+  for (int i = 0; i < dst.first; ++i) {
+    for (int j = 0; j < dst.second; ++j) {
+      room[i][j].f = room[i][j].g = room[i][j].h = -1;
+      room[i][j].parentX = room[i][j].parentY = -1;
+    }
+  }
 
-	for (int i = 0; i < ROW; ++i) {
-		for (int j = 0; j < COL; ++j) {
-			zmap[i][j] = grid[i][j] + '0';
-		}
-	}
+  
+  
+  int sx, sy = 0;
+  room[sy][sx].f = room[sy][sx].g = room[sy][sx].h = 0.0;
+  room[sy][sx].parentX = sx;
+  room[sy][sx].parentY = sy;
 
-	if (aStarSearch(grid, src, dst)) PrintMap();
-	else std::cout << "실패.";
+  //열린배열에 첫 노드 삽입 (0,0)
+  set<pair<double, pair<int, int>>> openList;
+  openList.insert({0.0, {sy, sx}});
 
-	return 0;
+  //탐색
+  while (!openList.empty()) {
+    pair<double, pair<int, int>> p = *openList.begin();
+    openList.erase(openList.begin());
+
+    int y = p.second.first;
+    int x = p.second.second;
+    closedList[y][x] = true;
+
+    double ng, nf, nh;
+
+    // 상하좌우 노드 탐색
+    for (int i = 0; i < 4; ++i) {
+
+
+      cout<<"\n";
+        for(int i=0;i<dst.first;i++){
+          for(int j=0;j<dst.second;j++){
+            cout<< closedList[i][j];
+          }
+          cout<<"\n";
+        }
+          
+        cout << "1";
+      int ny = y + dy[i];
+      int nx = x + dx[i];
+      cout << "ny: "<<ny <<" nx: "<<nx<<"\n";
+
+      if (ny >= 0 && ny < dst.first && nx >= 0 && nx < dst.second) {
+        cout << "2.1";
+        if (ny == dst.first && nx == dst.second) {
+          room[ny][nx].parentY = y;
+          room[ny][nx].parentX = x;
+          // tracePath(cellDetails, dst);
+          cout << "2.2";
+          return true;
+        }
+        // bfs와 굳이 비교하자면, closedList를 방문여부라고 생각하시면 됩니다.
+        else if (!closedList[ny][nx] && world[y][x] == 1) {
+          // 이부분 y x, ny nx 헷갈리는거 조심
+          cout << "3";
+          ng = room[y][x].g + 1.0;
+          nh = GetH(ny, nx, dst);
+          nf = ng + nh;
+
+          // 만약 한번도 갱신이 안된f거나, 새로갱신될 f가 기존f보다 작을시 참
+          if (room[ny][nx].f == -1 || room[ny][nx].f > nf) {
+            cout << "4";
+            room[ny][nx].f = nf;
+            room[ny][nx].g = ng;
+            room[ny][nx].h = nh;
+            room[ny][nx].parentX = x;
+            room[ny][nx].parentY = y;
+            openList.insert({nf, {ny, nx}});
+            cout<<" nf: "<<nf;
+          }
+        }
+      }
+    }
+  }
+
+  return false;
 }
