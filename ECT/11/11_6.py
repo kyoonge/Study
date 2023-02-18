@@ -1,35 +1,32 @@
+import heapq
+
 food_times = [4,10]
 k = 10
-result = 1
 
 def solution(food_times, k):
-    answer=0
-    empty_count=0
-    foodlen = len(food_times)
-    i = 0
+  #전체 음식을 먹는 시간보다 K가 크거나 같다면 -1
+  if sum(food_times)<=k:
+    return -1
 
-    while k>0:
-        if food_times[i]!=0:
-            k-=1
-            food_times[i]-=1
-            i=next_index(i,foodlen)
-            empty_count=0
-        elif food_times[i]==0:
-            i=next_index(i,foodlen)
-            empty_count+=1
-        if empty_count==foodlen:
-            return -1
-        #print("i:",i," k:",k," food_times:",food_times)
-    answer = i
+  #시간이 작은 음식으터 뺴야 하므로 우선순위 큐를 이용
+  q =[]
+  for i in range(len(food_times)):
+    #(음식시간, 음식 번호) 형태로 우선순위 큐에 삽입
+    heapq.heappush(q,(food_times[i].i+1))
 
-    return answer+1
+  sum_value = 0 #먹기 위해 사용한 시간
+  previous = 0 #직전에 다 먹은 음식 시간
 
+  length = len(food_times) #남은 음식의 개수
 
-def next_index(i, len):
-    i+=1
-    if i==len:
-        i=0
-    #print("now i: ",i)
-    return i
+  #sum_value + (현재의 음식 시간 - 이전의 음식 시간)* 현재 음식 개수와 k비교
+  while sum_value + ((q[0][0]-previous)*length)<=k:
+    now = heapq.heappop(q)[0]
+    sum_value += (now-previous)*length
+    length -= 1 # 다먹은 음식 제외
+    previous = now #이전 음식 시간 재설정
+  #남은 음식 중에서 몇 번쨰 음식인지 확인하여 출력
+  result = sorted(q, key = lambda x:x[1]) #음식의 번호 기준으로 정렬
+  return result[(k-sum_value)%length][1]
 
 print(solution(food_times,k))
