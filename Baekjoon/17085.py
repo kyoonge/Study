@@ -1,47 +1,47 @@
 #입력
-n,m = map(int,input().split())
+N,M = map(int,input().split())
 field=[]
-for i in range(n):
+for i in range(N):
     field.append(list(input()))
 savelist=[]
-
-#함수1: '#'포함 좌표, 가능한 크기 리스트에 저장
-def savedot(r,c):
-    dx = [-1,0,1,0]
-    dy = [0,1,0,-1]
-    size=0
-    while r-size>=0 and r+size<n and c-size>=0 and c+size<m and field[r-size][c]==field[r+size][c]==field[r][c-size]==field[r][c+size]=='#':
-        size+=1
-    while size>0:
-        size-=1
-        savelist.append([size, r, c])
-  
-#함수2: 유효성 검사(두 십자가가 서로 겹치지 않는지, 결과 저장)
-def compare(dot1,dot2):
-    dx=[-1,1,0,0]
+#'#'좌표와 가능한 크기 전부 저장
+def checkdot(r,c):
+    size = 0
+    while True:
+        if 0<=c-size and c+size<M and 0<=r-size and r+size<N and field[r][c-size] == field[r][c+size] == field[r-size][c] == field[r+size][c] == '#':
+          if [r,c,size] not in savelist:
+            savelist.append([r,c,size])
+            size+=1
+        else:
+          break
+        
+#두 십자가 겹치는지 검사
+def compare(d1,d2):
+    tmpfield = [ [0 for i in range(M)]for j in range(N)]
+    dx=[1,-1,0,0]
     dy=[0,0,1,-1]
-    testfield=[[0 for i in range(m)]for i in range(n)]
-    for size in range(dot1[0]+1):
-      for i in range(4):
-        testfield[dx[i]*size+dot1[1]][dy[i]*size+dot1[2]]=1
-    for size in range(dot2[0]+1):
-      for i in range(4):
-        if testfield[dx[i]*size+dot2[1]][dy[i]*size+dot2[2]]==1:
-          return 0
+    r1,c1,s1=d1[0],d1[1],d1[2]
+    r2,c2,s2=d2[0],d2[1],d2[2]
   
-  return (dot1[0]*4+1)*(dot2[0]*4+1)
-
-#모든 '#'에 대해 탐색
-for i in range(n):
-  for j in range(m):
+    for size in range(s1+1):
+      for di in range(4):
+        tmpfield[r1+dx[di]*size][c1+dy[di]*size]=1
+    for size in range(s2+1):
+      for di in range(4):
+        if tmpfield[r2+dx[di]*size][c2+dy[di]*size] ==1:
+          return -1
+    return (4*s1+1)*(4*s2+1)
+        
+for i in range(N):
+  for j in range(M):
     if field[i][j]=='#':
-        savedot(i,j)
-#print(savelist)
+        checkdot(i,j)
+        
+result =0
 
-#결과 비교
-result=0
 for i in range(len(savelist)):
-  for j in range(i, len(savelist)):
-    if result<((savelist[i][0]*4+1)*(savelist[j][0]*4+1)):
-        result = max(compare(savelist[i], savelist[j]),result)
+  for j in range(i+1,len(savelist)):
+    if (savelist[i][2]*4+1)*(savelist[j][2]*4+1)>result:
+        result = max(result,compare(savelist[i],savelist[j]))
+        
 print(result)
