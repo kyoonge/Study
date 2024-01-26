@@ -1,22 +1,18 @@
 #include <string>
-#include <vector>
 #include <iostream>
-#include <algorithm>
+#include <cmath>
 
 using namespace std;
 
 int solution(int n) {
     int answer = 0;
-    vector<int> array(n,0); 
     
-    for(int i=1 ; i<=n; i++){
+    for(int i=1 ; i<=sqrt(n); i++){
         if(n%i!=0) continue;
-        array[i-1] = 1;
+        if(i != sqrt(n)) answer += i + (n/i);
+        else answer += i;
     }
     
-    for(int i = 0; i<n; i++){
-        answer += array[i]*(i+1);
-    }
     
     return answer;
 }
