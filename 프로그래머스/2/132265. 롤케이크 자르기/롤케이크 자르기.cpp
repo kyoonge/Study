@@ -11,11 +11,9 @@ int solution(vector<int> topping) {
     vector<bool> bigCheck(10000,false);
     vector<bool> littleCheck(10000,false);
     
-        
-    int bigToppingNum =0;
     int bigCount = 0;
-    int littleToppingNum =0;
     int littleCount = 0;
+    
     for(int i=0;i<size;i++){
         if(!bigCheck[topping[i]]){
             bigCheck[topping[i]]= true;
