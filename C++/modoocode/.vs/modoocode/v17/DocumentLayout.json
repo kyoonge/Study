@@ -1,14 +1,10 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "D:\\Git\\Study\\C\u002B\u002B\\modoocode\\",
+  "WorkspaceRootPath": "D:\\kyoonge\\Unity\\AlgorithmStudy\\C\u002B\u002B\\modoocode\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{0CAB683E-F56A-422A-8318-05DAF9200825}|modoocode\\modoocode.vcxproj|D:\\Git\\Study\\C\u002B\u002B\\modoocode\\modoocode\\newmalloc.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{0CAB683E-F56A-422A-8318-05DAF9200825}|modoocode\\modoocode.vcxproj|solutionrelative:modoocode\\newmalloc.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{0CAB683E-F56A-422A-8318-05DAF9200825}|modoocode\\modoocode.vcxproj|D:\\Git\\Study\\C\u002B\u002B\\modoocode\\modoocode\\marine.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{0CAB683E-F56A-422A-8318-05DAF9200825}|modoocode\\modoocode.vcxproj|solutionrelative:modoocode\\marine.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{0CAB683E-F56A-422A-8318-05DAF9200825}|modoocode\\modoocode.vcxproj|D:\\kyoonge\\Unity\\AlgorithmStudy\\C\u002B\u002B\\modoocode\\modoocode\\copy.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{0CAB683E-F56A-422A-8318-05DAF9200825}|modoocode\\modoocode.vcxproj|solutionrelative:modoocode\\copy.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
   "DocumentGroupContainers": [
@@ -23,27 +19,14 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "newmalloc.cpp",
-              "DocumentMoniker": "D:\\Git\\Study\\C\u002B\u002B\\modoocode\\modoocode\\newmalloc.cpp",
-              "RelativeDocumentMoniker": "modoocode\\newmalloc.cpp",
-              "ToolTip": "D:\\Git\\Study\\C\u002B\u002B\\modoocode\\modoocode\\newmalloc.cpp",
-              "RelativeToolTip": "modoocode\\newmalloc.cpp",
-              "ViewState": "AQIAAA8AAAAAAAAAAAAAAB0AAAAAAAAA",
+              "Title": "copy.cpp",
+              "DocumentMoniker": "D:\\kyoonge\\Unity\\AlgorithmStudy\\C\u002B\u002B\\modoocode\\modoocode\\copy.cpp",
+              "RelativeDocumentMoniker": "modoocode\\copy.cpp",
+              "ToolTip": "D:\\kyoonge\\Unity\\AlgorithmStudy\\C\u002B\u002B\\modoocode\\modoocode\\copy.cpp",
+              "RelativeToolTip": "modoocode\\copy.cpp",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAA0AAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-05-29T15:02:00.488Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "marine.cpp",
-              "DocumentMoniker": "D:\\Git\\Study\\C\u002B\u002B\\modoocode\\modoocode\\marine.cpp",
-              "RelativeDocumentMoniker": "modoocode\\marine.cpp",
-              "ToolTip": "D:\\Git\\Study\\C\u002B\u002B\\modoocode\\modoocode\\marine.cpp",
-              "RelativeToolTip": "modoocode\\marine.cpp",
-              "ViewState": "AQIAABwAAAAAAAAAAAAUwC4AAAABAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-05-29T14:31:38.868Z",
+              "WhenOpened": "2024-06-08T05:59:16.452Z",
               "EditorCaption": ""
             }
           ]
