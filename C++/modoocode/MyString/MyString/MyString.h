@@ -44,4 +44,6 @@ public:
 
     //문자열 비교
     int compare(const MyString& str) const;
+
+    char& operator[](const int index);
 };

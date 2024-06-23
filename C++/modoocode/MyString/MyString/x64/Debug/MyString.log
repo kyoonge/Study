@@ -1,6 +1,4 @@
 ﻿  MyString.cpp
 D:\Git\Study\C++\modoocode\MyString\MyString\MyString.cpp(12,27): warning C4267: '=': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
 D:\Git\Study\C++\modoocode\MyString\MyString\MyString.cpp(91,20): warning C4267: '초기화 중': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-  main.cpp
-  코드를 생성하고 있습니다...
   MyString.vcxproj -> D:\Git\Study\C++\modoocode\MyString\x64\Debug\MyString.exe

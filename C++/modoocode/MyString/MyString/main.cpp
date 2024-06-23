@@ -6,6 +6,8 @@ void DoSomethingWithString(MyString s) {
 }
 
 int main() {
-	MyString s(3);
-	DoSomethingWithString(3);
+	MyString str("abcdef");
+	str[3] = 'c';
+
+	str.println();
 }
