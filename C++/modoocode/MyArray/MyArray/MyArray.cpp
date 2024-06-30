@@ -1,86 +1,119 @@
 #include <iostream>
-#include <cassert>
 
 class MyArray {
 private:
-    const int dim;   // 몇 차원 배열인지
-    int* size;       // 인덱스를 저장해놓는 배열
-    int* data;       // 실제 배열 데이터 저장소
-    int total_size;  // 전체 배열 크기
-    int calculateIndex(const int* indices) const;    // 다차원 인덱스를 1차원 인덱스로 변환
+      int dim;
+      int* size;
+      int* data;
+      int totalSize;
+
+      int getIndex(const int* indices) const {
+            int index = 0;
+            int multiplier = 1;
+            for (int i = dim - 1; i >= 0; --i) {
+                  index += indices[i] * multiplier;
+                  multiplier *= size[i];
+            }
+            return index;
+      }
 
 public:
-    MyArray(int dim, int* array_size);
-    ~MyArray();
+      MyArray(int dim, const int* array_size) : dim(dim), totalSize(1) {
+            size = new int[dim];
+            for (int i = 0; i < dim; ++i) {
+                  size[i] = array_size[i];
+                  totalSize *= array_size[i];
+            }
+            data = new int[totalSize](); // Initialize with zeros
+      }
 
-    class Proxy {       // Proxy 클래스
-    private:
-        MyArray& array;
-        int* indices;   // 각 차원에 대한 인덱스 저장
-        int level;  //현재 접근하고 있는 차원
+      ~MyArray() {
+            delete[] size;
+            delete[] data;
+      }
 
-    public:
-        Proxy(MyArray& arr, int* idx, int lvl);
-        Proxy operator[](int index);
-        operator int& ();
-        Proxy& operator=(const int& value);
-    };
+      class Proxy {
+      private:
+            MyArray& array;
+            int* indices;
+            int level;
 
-    Proxy operator[](int index);    // 배열 접근용 operator[]
+      public:
+            Proxy(MyArray& array, int level) : array(array), level(level) {
+                  indices = new int[array.dim]();
+            }
+
+            Proxy(MyArray& array, const int* indices, int level) : array(array), level(level) {
+                  this->indices = new int[array.dim]();
+                  for (int i = 0; i < level; ++i) {
+                        this->indices[i] = indices[i];
+                  }
+            }
+
+            ~Proxy() {
+                  delete[] indices;
+            }
+
+            Proxy operator[](int index) {
+                  if (level >= array.dim) {
+                        throw std::out_of_range("Too many indices.");
+                  }
+                  int* newIndices = new int[array.dim];
+                  for (int i = 0; i < level; ++i) {
+                        newIndices[i] = indices[i];
+                  }
+                  newIndices[level] = index;
+                  Proxy nextProxy(array, newIndices, level + 1);
+                  delete[] newIndices;
+                  return nextProxy;
+            }
+
+            operator int() {
+                  if (level != array.dim) {
+                        throw std::out_of_range("Not enough indices.");
+                  }
+                  return array.data[array.getIndex(indices)];
+            }
+
+            Proxy& operator=(int value) {
+                  if (level != array.dim) {
+                        throw std::out_of_range("Not enough indices.");
+                  }
+                  array.data[array.getIndex(indices)] = value;
+                  return *this;
+            }
+      };
+
+      Proxy operator[](int index) {
+            int* initialIndices = new int[dim]();
+            initialIndices[0] = index;
+            Proxy p(*this, initialIndices, 1);
+            delete[] initialIndices;
+            return p;
+      }
 };
 
-int MyArray::calculateIndex(const int* indices) const
-{
-    int flat_index = 0;
-    int multiplier = 1;
-    for (int i = dim - 1; i >= 0; --i) {
-        flat_index += indices[i] * multiplier;
-        multiplier *= size[i];
-    }
-    return flat_index;
-}
+int main() {
+      int size[] = { 2, 3, 4 }; // 3D array of size 2x3x4
+      MyArray arr(3, size);
 
-MyArray::MyArray(int dim, int* array_size) : dim(dim)
-{
-    size = new int[dim];
-    total_size = 1;
-    for (int i = 0; i < dim; ++i) {
-        size[i] = array_size[i];
-        total_size *= size[i];
-    }
-    data = new int[total_size]();   //메모리 할당 후 0으로 초기화
-}
+      // Fill the array with some values
+      for (int i = 0; i < size[0]; ++i) {
+            for (int j = 0; j < size[1]; ++j) {
+                  for (int k = 0; k < size[2]; ++k) {
+                        arr[i][j][k] = (i + 1) * (j + 1) * (k + 1);
+                  }
+            }
+      }
 
-MyArray::~MyArray()
-{
-    delete[] size;
-    delete[] data;
-}
+      // Print the array
+      for (int i = 0; i < size[0]; ++i) {
+            for (int j = 0; j < size[1]; ++j) {
+                  for (int k = 0; k < size[2]; ++k) {
+                        std::cout << "arr[" << i << "][" << j << "][" << k << "] = " << arr[i][j][k] << std::endl;
+                  }
+            }
+      }
 
-MyArray::Proxy MyArray::operator[](int index)
-{
-    int* indices = new int[dim]();
-    indices[0] = index;
-    return Proxy(*this, indices, 1);
-}
-
-MyArray::Proxy MyArray::Proxy::operator[](int index)
-{
-    indices[level] = index;
-    return Proxy(array, indices, level+1);
-}
-
-MyArray::Proxy::Proxy(MyArray& arr, int* idx, int lvl): array(arr), indices(idx), level(lvl) {}
-
-MyArray::Proxy::operator int& ()
-{
-    int flat_index = array.calculateIndex(indices);
-    return array.data[flat_index];
-}
-
-MyArray::Proxy& MyArray::Proxy::operator=(const int& value)
-{
-    int flat_index = array.calculateIndex(indices);
-    array.data[flat_index] = value;
-    return *this;
+      return 0;
 }
