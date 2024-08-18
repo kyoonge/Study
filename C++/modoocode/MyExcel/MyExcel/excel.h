@@ -1,8 +1,8 @@
-#pragma once
 #ifndef EXCEL_H
 #define EXCEL_H
 
 #include <string>
+#include <ctime>
 #include "utils.h"
 
 namespace MyExcel {
@@ -13,12 +13,56 @@ namespace MyExcel {
 	protected:
 		int x, y;
 		Table* table;
+
+	public:
+		virtual std::string stringify() = 0;
+		virtual int to_numeric() = 0;
+
+		Cell(int x, int y, Table* table);
+	};
+
+	class StringCell : public Cell {
 		std::string data;
 
 	public:
-		virtual std::string stringify();
-		virtual int to_numeric();
-		Cell(std::string data, int x, int y, Table* table);
+		std::string stringify() override;
+		int to_numeric() override;
+
+		StringCell(std::string data, int x, int y, Table* t);
+	};
+
+	class NumberCell : public Cell {
+		int data;
+
+	public:
+		std::string stringify() override;
+		int to_numeric() override;
+
+		NumberCell(int data, int x, int y, Table* t);
+	};
+
+	class DateCell : public Cell {
+		time_t data;
+
+	public:
+		std::string stringify() override;
+		int to_numeric() override;
+
+		DateCell(std::string s, int x, int y, Table* t);
+	};
+
+	class ExprCell : public Cell {
+		std::string data;
+		Vector exp_vec;
+
+		int precedence(char c);
+		void parse_expression();
+
+	public:
+		ExprCell(std::string data, int x, int y, Table* t);
+
+		std::string stringify() override;
+		int to_numeric() override;
 	};
 
 	class Table {
@@ -29,6 +73,7 @@ namespace MyExcel {
 	public:
 		Table(int max_row_size, int max_col_size);
 		~Table();
+
 		void reg_cell(Cell* c, int row, int col);
 		int to_numeric(const std::string& s);
 		int to_numeric(int row, int col);
@@ -56,6 +101,16 @@ namespace MyExcel {
 	public:
 		HtmlTable(int row, int col);
 		std::string print_table() override;
+	};
+
+	class Excel {
+		Table* current_table;
+
+	public:
+		Excel(int max_row, int max_col, int choice);
+
+		int parse_user_input(std::string s);
+		void command_line();
 	};
 
 }  // namespace MyExcel
